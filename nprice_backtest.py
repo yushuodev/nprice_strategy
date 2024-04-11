@@ -131,7 +131,7 @@ def rolling_walk_forward_optimization(prices, datas, data_ma_s, optimization_win
 
     return wfo_results
 
-df = pd.read_csv('BTCUSDT_1h.csv', index_col='timestamp', parse_dates=True)
+df = pd.read_csv('BTCUSDT_1h_nprice.csv', index_col='timestamp', parse_dates=True)
 
 ma_combs = np.arange(10, 1000, 5)
 thresholds = np.arange(-3.0, 3.0, 0.05)
