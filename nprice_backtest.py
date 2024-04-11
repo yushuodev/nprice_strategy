@@ -108,8 +108,9 @@ def inf(prices, data, data_ma, th):
 
 def rolling_walk_forward_optimization(prices, datas, data_ma_s, optimization_window, steps, windows, ths):
     n = len(prices)
-    wfo_results = []
-    out_sample_equity = 1
+    opt_results = []
+    inf_results = []
+    inf_total_eq = 1.0
     for start_idx in tqdm(range(1000, n - optimization_window, steps), desc="wfo"):
         data_ma = data_ma_s[:,start_idx:start_idx + optimization_window]
         data = datas[start_idx:start_idx + optimization_window]
@@ -122,14 +123,16 @@ def rolling_walk_forward_optimization(prices, datas, data_ma_s, optimization_win
         data_ma = data_ma_s[window_idx, start_idx + optimization_window:start_idx + optimization_window + steps]
         
         max_dd, equity = inf(price, data, data_ma, th)
-        out_sample_equity *= equity
-        print('result:', equity)
-        print('out_sample_equity:', out_sample_equity)
+        inf_total_eq *= equity
+        # print('result:', equity)
+        # print('out_sample_equity:', inf_total_eq)
 
-        result = (start_idx, window, th, score, output[-1])
-        wfo_results.append(result)
-
-    return wfo_results
+        opt_result = (start_idx, window, th, score, output[-1])
+        inf_result = (start_idx + optimization_window, equity)
+        opt_results.append(opt_result)
+        inf_results.append(inf_result)
+    print('total_out_sample_equity:', inf_total_eq)
+    return opt_results, inf_results
 
 df = pd.read_csv('BTCUSDT_1h_nprice.csv', index_col='timestamp', parse_dates=True)
 
@@ -143,7 +146,7 @@ for ma_comb in ma_combs:
     results.append(calculate_moving_average(df['Signal'].values, ma_comb))
 
 precomputed_ma = np.array(results)
-result = rolling_walk_forward_optimization(df['close'].values, df['Signal'].values, precomputed_ma, in_window, out_window, ma_combs, thresholds)
-print(result)
+opt_results, inf_results = rolling_walk_forward_optimization(df['close'].values, df['Signal'].values, precomputed_ma, in_window, out_window, ma_combs, thresholds)
+print(opt_results)
 
 
