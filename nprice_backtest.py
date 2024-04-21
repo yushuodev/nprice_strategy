@@ -131,7 +131,7 @@ def rolling_walk_forward_optimization(prices, datas, data_ma_s, optimization_win
         inf_result = (start_idx + optimization_window, equity)
         opt_results.append(opt_result)
         inf_results.append(inf_result)
-    print('total_out_sample_equity:', inf_total_eq)
+    print('total_est_out_sample_equity:', inf_total_eq)
     return opt_results, inf_results
 
 df = pd.read_csv('BTCUSDT_1h_nprice.csv', index_col='timestamp', parse_dates=True)
